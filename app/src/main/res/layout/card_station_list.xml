@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="model" type="ru.pe4encka.radio.models.StationModel"/>
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ImageView
+                app:src="@{model.icon}"
+                android:layout_width="88dp" android:layout_height="31dp"
+                app:layout_constraintStart_toStartOf="parent"
+                android:scaleType="centerCrop" android:id="@+id/imageView"
+                app:layout_constraintBottom_toBottomOf="@+id/textView"/>
+        <TextView
+                android:text="@{model.name}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/imageView"
+                android:layout_marginStart="8dp" android:textSize="24sp" android:fontFamily="@font/roboto_light"
+                android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+                android:text="@{model.slogan}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView2" android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/textView" android:fontFamily="@font/roboto_light"
+                app:layout_constraintStart_toStartOf="@+id/textView"/>
+        <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:id="@+id/view" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" android:background="@color/colorAccent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

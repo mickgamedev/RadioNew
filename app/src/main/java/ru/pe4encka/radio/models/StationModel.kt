@@ -1,6 +1,6 @@
-package ru.pe4encka.radio
+package ru.pe4encka.radio.models
 
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class StationModel(

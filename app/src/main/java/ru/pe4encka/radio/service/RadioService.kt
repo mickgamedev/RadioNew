@@ -1,4 +1,4 @@
-package ru.pe4encka.radio
+package ru.pe4encka.radio.service
 
 import android.app.PendingIntent
 import android.app.Service
@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import ru.pe4encka.radio.ui.MainActivity
 
 val TAG_FOREGROUND_SERVICE = "FOREGROUND_SERVICE"
 val ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE"
