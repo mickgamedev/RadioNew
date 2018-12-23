@@ -12,15 +12,14 @@ object PlayerModel {
             it.showProcessPrepare.set(false)
             isPlaying = true
         }
-
     }
 
     fun stop() {
+        isPlaying = false
         currentRecyclerItem?.let {
             it.showDescription.set(false)
             it.showStopButton.set(false)
             it.showProcessPrepare.set(false)
-            isPlaying = false
         }
     }
 
@@ -32,12 +31,12 @@ object PlayerModel {
 
     fun findRecyclerItem(items: List<RecyclerModel>) {
         currentPlay ?: return
-        if (!isPlaying) return
+        //if (!isPlaying) return
 
         for (it in items) {
             if (it.station == currentPlay) {
                 currentRecyclerItem = it
-                play()
+                if (isPlaying) play() else stop()
                 break
             }
         }
