@@ -13,8 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ru.pe4encka.radio.R
 import ru.pe4encka.radio.adapters.StationsListAdapter
 import ru.pe4encka.radio.databinding.FragmentStationsListBinding
+import ru.pe4encka.radio.models.PlayerModel
 import ru.pe4encka.radio.models.StationModel
+import ru.pe4encka.radio.repository.Repository
 import ru.pe4encka.radio.service.ACTION_START_FOREGROUND_SERVICE
+import ru.pe4encka.radio.service.ACTION_STOP_FOREGROUND_SERVICE
 import ru.pe4encka.radio.service.EXTRA_FILENAME_ID
 import ru.pe4encka.radio.service.RadioService
 import ru.pe4encka.radio.viewmodel.MainViewModel
@@ -32,20 +35,40 @@ class StationsListFragment : Fragment() {
         binding.apply {
             viewModel = model
             recycler.adapter = StationsListAdapter().apply {
-                onItemClick = { i -> onStationClick(getItem(i).station) }
+                onItemClick = { i ->
+                    onStationClick(getItem(i).station)
+                    PlayerModel.stop()
+                    PlayerModel.currentRecyclerItem = getItem(i)
+                }
             }
-            recycler.layoutManager = LinearLayoutManager(activity)
+            recycler.layoutManager = LinearLayoutManager(activity).apply {
+                scrollToPositionWithOffset(Repository.currentRecyclerPosition, 0)
+            }
+
         }
 
         return binding.root
     }
 
     fun onStationClick(station: StationModel) {
+        val act = if (PlayerModel.isPlaying) {
+            if (PlayerModel.currentPlay == station) ACTION_STOP_FOREGROUND_SERVICE else ACTION_START_FOREGROUND_SERVICE
+        } else ACTION_START_FOREGROUND_SERVICE
+
+        PlayerModel.currentPlay = station
+
         Intent(activity, RadioService::class.java).apply {
-            action = ACTION_START_FOREGROUND_SERVICE
+            action = act
             putExtra(EXTRA_FILENAME_ID, station.stream)
             activity?.startService(this)
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        PlayerModel.currentRecyclerItem = null
+        Repository.currentRecyclerPosition =
+                (binding.recycler.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+        Repository.saveRecyclerPosition(activity!!)
+    }
 }

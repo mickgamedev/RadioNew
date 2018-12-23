@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import ru.pe4encka.radio.models.PlayerModel
 import ru.pe4encka.radio.models.RecyclerModel
 import ru.pe4encka.radio.models.StationModel
 
@@ -33,7 +34,7 @@ fun TextView.setTextVisibility(st: String) {
 fun RecyclerView.setLibrary(lib: List<StationModel>?) {
     lib ?: return
     adapter ?: return
-    (adapter as StationsListAdapter).setItems(lib.map { RecyclerModel(it) })
+    (adapter as StationsListAdapter).setItems(lib.map { RecyclerModel(it) }.apply { PlayerModel.findRecyclerItem(this) })
 }
 
 @BindingAdapter("src")

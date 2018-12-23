@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import ru.pe4encka.radio.R
+import ru.pe4encka.radio.models.PlayerModel
 import ru.pe4encka.radio.ui.MainActivity
 
 val TAG_FOREGROUND_SERVICE = "FOREGROUND_SERVICE"
@@ -69,6 +70,7 @@ class RadioService : Service() {
         mediaPlayer?.setDataSource(path)
         mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
         mediaPlayer?.prepareAsync()
+        PlayerModel.prepare()
     }
 
     private fun setMediaPlayerListeners() {
@@ -78,6 +80,7 @@ class RadioService : Service() {
     private fun preparedListener() {
         readyToPlay = true
         play()
+        PlayerModel.play()
     }
 
     private fun clear(){
@@ -140,7 +143,10 @@ class RadioService : Service() {
         setSmallIcon(R.drawable.ic_radio_icon)
         //color = getColor(R.color.colorIconNotification)
         setPriority(NotificationCompat.PRIORITY_MAX)
-        setContentTitle("Radio")
+        PlayerModel.currentPlay?.let {
+            setContentTitle(it.name)
+        }
+        //setContentTitle("Radio")
         //setContentText(music.album)
         //setContentInfo(music.albumartist)
         //setLargeIcon(music.cover)
@@ -153,6 +159,7 @@ class RadioService : Service() {
         stopForeground(true)
         // Stop the foreground service.
         stopSelf()
+        PlayerModel.stop()
     }
 
     override fun onBind(intent: Intent): IBinder {
