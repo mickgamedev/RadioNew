@@ -3,9 +3,11 @@ package ru.pe4encka.radio.adapters
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import ru.pe4encka.radio.models.RecyclerModel
 import ru.pe4encka.radio.models.StationModel
 
 @BindingAdapter("visibility")
@@ -18,11 +20,20 @@ fun View.SetVisibitilyFade(b: Boolean) {
     alpha = if (b) 0.3f else 1.0f
 }
 
+@BindingAdapter("text")
+fun TextView.setTextVisibility(st: String) {
+    if (st.trim().isEmpty()) visibility = View.GONE
+    else {
+        visibility = View.VISIBLE
+        text = st
+    }
+}
+
 @BindingAdapter("stations_list")
 fun RecyclerView.setLibrary(lib: List<StationModel>?) {
     lib ?: return
     adapter ?: return
-    (adapter as StationsListAdapter).setItems(lib)
+    (adapter as StationsListAdapter).setItems(lib.map { RecyclerModel(it) })
 }
 
 @BindingAdapter("src")

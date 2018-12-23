@@ -12,5 +12,6 @@ data class StationModel(
     val stream:String,
     val logo:String,
     val language:String,
-    val format:String
+    val format: String,
+    val locate: String
 )

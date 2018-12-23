@@ -11,7 +11,7 @@ import ru.pe4encka.radio.repository.Repository
 
 class MainViewModel: ViewModel(){
     private val viewModelJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val ioScope = CoroutineScope(Dispatchers.IO + viewModelJob)
 
     val stations = ObservableField(Repository.stations)
     val parseStation = ObservableBoolean(false)
@@ -19,7 +19,7 @@ class MainViewModel: ViewModel(){
     init {
         if (stations.get() == null) {
             parseStation.set(true)
-            uiScope.launch {
+            ioScope.launch {
                 Repository.parseStationList()
                 stations.set(Repository.stations)
                 parseStation.set(false)
