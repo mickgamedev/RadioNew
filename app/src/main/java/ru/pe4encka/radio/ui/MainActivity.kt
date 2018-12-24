@@ -1,6 +1,7 @@
 package ru.pe4encka.radio.ui
 
 import android.os.Bundle
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -19,7 +20,29 @@ class MainActivity : AppCompatActivity() {
         model = ViewModelProviders.of(this).get(MainViewModel::class.java)
         binding.viewModel = model
 
+        setSearchListeners()
+
         setFragment(StationsListFragment(), R.id.fragmentListContainer)
+    }
+
+    private fun setSearchListeners() = binding.search.apply {
+        setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                model.onSearch(query ?: "")
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+        })
+
+        setOnCloseListener {
+            model.onSearch("")
+            false
+        }
+
     }
 
     private fun setFragment(fragment: Fragment, container: Int) {

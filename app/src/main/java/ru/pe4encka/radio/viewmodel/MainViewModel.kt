@@ -1,5 +1,6 @@
 package ru.pe4encka.radio.viewmodel
 
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,7 @@ class MainViewModel: ViewModel(){
     val stations = ObservableField(Repository.stations)
     val parseStation = ObservableBoolean(false)
 
-    val showUpScroll = ObservableBoolean(true)
+    val showUpScroll = ObservableBoolean(false)
 
     init {
         if (stations.get() == null) {
@@ -36,9 +37,19 @@ class MainViewModel: ViewModel(){
         showUpScroll.set(!b)
     }
 
+    fun onSearch(query: String) {
+        Log.v("MainView", "OnSearch $query")
+        if (query.isEmpty()) stations.set(Repository.stations)
+        else stations.set(Repository.stations?.filter {
+            it.name.toLowerCase().contains(query.toLowerCase()) ||
+                    it.locate.toLowerCase().contains(query.toLowerCase()) ||
+                    it.tags.toString().toLowerCase().contains(query.toLowerCase()) ||
+                    it.format.toLowerCase().contains(query.toLowerCase())
+        })
+    }
+
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
     }
-
 }

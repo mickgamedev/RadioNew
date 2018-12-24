@@ -18,7 +18,7 @@ abstract class CategoryAdapter<T : Any, V : ViewDataBinding>(val layout: Int) :
         Log.w("ADAPTER", "setItems list size = ${list.size}")
     }
 
-    fun getItem(position: Int) = items[position]
+    open fun getItem(position: Int) = items[position]
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder<V> {
         val inflater = LayoutInflater.from(parent.context)

@@ -3,6 +3,7 @@ package ru.pe4encka.radio.adapters
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -56,4 +57,24 @@ fun ImageView.setSourceImage(src: String?) {
         return
     }
     if (!src.isEmpty()) Picasso.get().load(src).into(this)
+}
+
+@BindingAdapter("onSearch")
+fun SearchView.setOnSearch(listener: (String) -> Unit) {
+    setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?): Boolean {
+            listener("")
+            return false
+        }
+
+        override fun onQueryTextChange(newText: String?): Boolean {
+            return true
+        }
+
+    })
+
+    setOnCloseListener {
+        listener("")
+        false
+    }
 }
