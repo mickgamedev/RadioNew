@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ru.pe4encka.radio.R
 import ru.pe4encka.radio.adapters.StationsListAdapter
 import ru.pe4encka.radio.databinding.FragmentStationsListBinding
@@ -45,6 +46,18 @@ class StationsListFragment : Fragment() {
                 scrollToPositionWithOffset(Repository.currentRecyclerPosition, 0)
             }
 
+            recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val i = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    model.onViewFirstItem(i < 5)
+                }
+            })
+
+        }
+
+        model.scrollToUp = {
+            (binding.recycler.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(0, 0)
         }
 
         return binding.root
@@ -70,5 +83,6 @@ class StationsListFragment : Fragment() {
         Repository.currentRecyclerPosition =
                 (binding.recycler.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
         Repository.saveRecyclerPosition(activity!!)
+        model.scrollToUp = {}
     }
 }

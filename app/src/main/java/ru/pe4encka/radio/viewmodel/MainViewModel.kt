@@ -12,9 +12,12 @@ import ru.pe4encka.radio.repository.Repository
 class MainViewModel: ViewModel(){
     private val viewModelJob = Job()
     private val ioScope = CoroutineScope(Dispatchers.IO + viewModelJob)
+    var scrollToUp: () -> Unit = {}
 
     val stations = ObservableField(Repository.stations)
     val parseStation = ObservableBoolean(false)
+
+    val showUpScroll = ObservableBoolean(true)
 
     init {
         if (stations.get() == null) {
@@ -25,6 +28,12 @@ class MainViewModel: ViewModel(){
                 parseStation.set(false)
             }
         }
+    }
+
+    fun toUP() = scrollToUp()
+
+    fun onViewFirstItem(b: Boolean) {
+        showUpScroll.set(!b)
     }
 
     override fun onCleared() {
