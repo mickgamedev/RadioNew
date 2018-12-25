@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#FFC70C</color>
-    <color name="colorPrimaryDark">#FF860E</color>
+    <color name="colorPrimaryDark">#ff860e</color>
     <color name="colorAccent">#d81b60</color>
     <color name="colorIconNotification">#ffffff</color>
     <color name="colorOrange">#ffa60c</color>
+    <color name="colorLightOrange">#fff3e0</color>
+    <color name="colorMenuUnchecked">#9b9b9b</color>
+    <color name="colorMenuChecked">#d9680b</color>
 </resources>

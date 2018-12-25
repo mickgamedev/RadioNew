@@ -50,7 +50,7 @@ class StationsListFragment : Fragment() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     val i = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                    model.onViewFirstItem(i < 5)
+                    model.onViewFirstItem(i < 20)
                 }
             })
 

@@ -15,6 +15,7 @@
                 app:stations_list="@{viewModel.stations}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+
         <ProgressBar
                 app:visibility="@{viewModel.parseStation}"
                 style="?android:attr/progressBarStyle"
