@@ -69,6 +69,7 @@ class StationsListFragment : Fragment() {
         } else ACTION_START_FOREGROUND_SERVICE
 
         PlayerModel.currentPlay = station
+        model.onAddRecentStation(station)
 
         Intent(activity, RadioService::class.java).apply {
             action = act
