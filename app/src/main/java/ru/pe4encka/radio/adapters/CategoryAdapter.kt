@@ -9,13 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 
 abstract class CategoryAdapter<T : Any, V : ViewDataBinding>(val layout: Int) :
     RecyclerView.Adapter<CategoryAdapter.CategoryHolder<V>>() {
-    private var items = listOf<T>()
+    private var items = mutableListOf<T>()
     var onItemClick: (Int) -> Unit = { v -> Log.v("NOT BINDING", "v = $v") }
 
     fun setItems(list: List<T>) {
-        items = list
+        items = list.toMutableList()
         notifyDataSetChanged()
         Log.w("ADAPTER", "setItems list size = ${list.size}")
+    }
+
+    fun removeItem(i: Int) {
+        items.removeAt(i)
     }
 
     open fun getItem(position: Int) = items[position]

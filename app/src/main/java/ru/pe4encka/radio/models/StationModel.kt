@@ -19,5 +19,5 @@ data class StationModel(
     val language:String,
     val format: String,
     val locate: String,
-    @Optional val recent: Boolean = false
+    @Optional var recent: Boolean = false
 )

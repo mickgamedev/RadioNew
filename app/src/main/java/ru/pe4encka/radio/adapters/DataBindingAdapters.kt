@@ -34,12 +34,20 @@ fun TextView.setTextVisibility(st: String) {
 }
 
 @BindingAdapter("stations_list")
-fun RecyclerView.setLibrary(lib: List<StationModel>?) {
+fun RecyclerView.setStationList(lib: List<StationModel>?) {
     lib ?: return
     adapter ?: return
     (adapter as StationsListAdapter).setItems(lib.map { RecyclerModel(it) }.apply { PlayerModel.findRecyclerItem(this) })
     (layoutManager as LinearLayoutManager).scrollToPositionWithOffset(Repository.currentRecyclerPosition, 0)
 }
+
+@BindingAdapter("recent_list")
+fun RecyclerView.setRecentList(lib: List<StationModel>?) {
+    lib ?: return
+    adapter ?: return
+    (adapter as RecentListAdapter).setItems(lib.map { RecyclerModel(it) }.apply { PlayerModel.findRecyclerItem(this) })
+}
+
 
 @BindingAdapter("src")
 fun ImageView.setBitmap(bitmap: Bitmap?) {

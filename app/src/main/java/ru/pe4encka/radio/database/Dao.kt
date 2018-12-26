@@ -20,6 +20,4 @@ interface StationModelDao {
 
     @Query("SELECT * FROM stations WHERE recent=1")
     fun getRecentStations(): Observable<List<StationModel>>
-
-    //TODO сделать удалени избранных станций через обновнение флага recent
 }

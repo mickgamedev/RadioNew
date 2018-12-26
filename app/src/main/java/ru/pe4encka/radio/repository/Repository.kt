@@ -3,7 +3,6 @@ package ru.pe4encka.radio.repository
 import android.content.Context
 import android.util.Log
 import kotlinx.serialization.json.JSON
-import kotlinx.serialization.list
 import org.apache.commons.io.IOUtils
 import ru.pe4encka.radio.R
 import ru.pe4encka.radio.database.*
@@ -49,5 +48,10 @@ object Repository{
         getSharedPreferences("settings.txt", Context.MODE_PRIVATE).apply {
             currentRecyclerPosition = getInt("recyclerPosition", 0)
         }
+    }
+
+    fun isCatalog(list: List<StationModel>): Boolean {
+        stations ?: return false
+        return stations!!.size == list.size
     }
 }

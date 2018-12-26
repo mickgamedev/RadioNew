@@ -22,8 +22,10 @@ class MainViewModel : ViewModel() {
 
     val parseStation = ObservableBoolean(false)
 
+    val showSearch = ObservableBoolean(true)
     val showUpScroll = ObservableBoolean(false)
     private val disp: Disposable
+    private var tempShowUpScroll: Boolean = false
 
     init {
         if (stations.get() == null) {
@@ -47,6 +49,7 @@ class MainViewModel : ViewModel() {
 
     fun onAddRecentStation(station: StationModel) {
         ioScope.launch {
+            station.recent = true
             Repository.addRecentStation(station)
         }
     }
@@ -61,6 +64,31 @@ class MainViewModel : ViewModel() {
                     it.format.toLowerCase().contains(query.toLowerCase())
         })
     }
+
+    fun onSelectTab(i: Int) {
+        when (i) {
+            0 -> {
+                showSearch.set(true)
+                showUpScroll.set(tempShowUpScroll)
+            }
+            1 -> {
+                showUpScroll.set(false)
+                showSearch.set(false)
+                tempShowUpScroll = showUpScroll.get()
+            }
+        }
+    }
+
+    fun onSwipeRecentItem(i: Int) {
+        val list = recentStations.get()
+        list ?: return
+        val station = list[i]
+        ioScope.launch {
+            station.recent = false
+            Repository.addRecentStation(station)
+        }
+    }
+
 
     override fun onCleared() {
         super.onCleared()

@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import ru.pe4encka.radio.R
-import ru.pe4encka.radio.RecentListFragment
 import ru.pe4encka.radio.databinding.ActivityMainBinding
 import ru.pe4encka.radio.viewmodel.MainViewModel
 
@@ -35,10 +34,11 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.menu_catalog_id -> {
                 setFragment(StationsListFragment(), R.id.fragmentListContainer)
-
+                model.onSelectTab(0)
             }
             R.id.menu_recent_id -> {
                 setFragment(RecentListFragment(), R.id.fragmentListContainer)
+                model.onSelectTab(1)
             }
         }
         return true

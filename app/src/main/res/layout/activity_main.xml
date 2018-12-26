@@ -36,6 +36,7 @@
                             app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"/>
                     <SearchView
+                            app:visibility="@{viewModel.showSearch}"
                             android:id="@+id/search"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
