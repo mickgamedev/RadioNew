@@ -2,6 +2,7 @@ package ru.pe4encka.radio.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Optional
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,5 +18,6 @@ data class StationModel(
     val logo:String,
     val language:String,
     val format: String,
-    val locate: String
+    val locate: String,
+    @Optional val recent: Boolean = false
 )

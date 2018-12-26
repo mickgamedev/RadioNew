@@ -18,7 +18,8 @@ interface StationModelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addStation(station: StationModel)
 
-    @Query("SELECT * FROM stations")
+    @Query("SELECT * FROM stations WHERE recent=1")
     fun getRecentStations(): Observable<List<StationModel>>
 
+    //TODO сделать удалени избранных станций через обновнение флага recent
 }
