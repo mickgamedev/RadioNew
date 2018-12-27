@@ -9,6 +9,7 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import ru.pe4encka.radio.R
 import ru.pe4encka.radio.models.PlayerModel
 import ru.pe4encka.radio.models.RecyclerModel
 import ru.pe4encka.radio.models.StationModel
@@ -22,6 +23,17 @@ fun View.SetVisibitily(b: Boolean) {
 @BindingAdapter("visibility_fade")
 fun View.SetVisibitilyFade(b: Boolean) {
     alpha = if (b) 0.3f else 1.0f
+}
+
+@BindingAdapter("background_select")
+fun View.SelectBackground(b: Boolean){
+    background = if(b) {
+        elevation = 5.0f
+        resources.getDrawable(R.color.colorBackgroundDark)
+    } else {
+        elevation = 0.0f
+        resources.getDrawable(R.color.colorBackgroundLite)
+    }
 }
 
 @BindingAdapter("text")

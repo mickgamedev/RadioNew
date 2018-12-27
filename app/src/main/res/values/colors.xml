@@ -8,4 +8,8 @@
     <color name="colorLightOrange">#fff3e0</color>
     <color name="colorMenuUnchecked">#9b9b9b</color>
     <color name="colorMenuChecked">#d9680b</color>
+
+    <color name="colorBackgroundLite">#ffffff</color>
+    <color name="colorBackgroundDark">#d9fcfa</color>
+
 </resources>
