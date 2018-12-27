@@ -9,11 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import ru.pe4encka.radio.R
 import ru.pe4encka.radio.databinding.ActivityMainBinding
+import ru.pe4encka.radio.repository.Repository
 import ru.pe4encka.radio.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var model: MainViewModel
+    private var tabPosition:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +26,12 @@ class MainActivity : AppCompatActivity() {
             bottomMenu.apply {
                 itemIconTintList = resources.getColorStateList(R.color.bnv_base, theme)
                 setOnNavigationItemSelectedListener { menuItemSelected(it) }
-                selectedItemId = R.id.menu_catalog_id
+                tabPosition = Repository.loadTabPosition(this@MainActivity)
+                selectedItemId = when(tabPosition) {
+                    0 -> R.id.menu_catalog_id
+                    1 -> R.id.menu_recent_id
+                    else -> R.id.menu_catalog_id
+                }
             }
         }
         setSearchListeners()
@@ -35,10 +42,12 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_catalog_id -> {
                 setFragment(StationsListFragment(), R.id.fragmentListContainer)
                 model.onSelectTab(0)
+                tabPosition = 0
             }
             R.id.menu_recent_id -> {
                 setFragment(RecentListFragment(), R.id.fragmentListContainer)
                 model.onSelectTab(1)
+                tabPosition = 1
             }
         }
         return true
@@ -72,4 +81,8 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Repository.saveTabPosition(this,tabPosition)
+    }
 }

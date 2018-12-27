@@ -46,9 +46,24 @@ object Repository{
             .apply()
     }
 
+    fun saveTabPosition(context: Context, tab: Int) = context.apply {
+        getSharedPreferences("settings.txt", Context.MODE_PRIVATE).edit()
+            .putInt("tabPosition", tab)
+            .apply()
+    }
+
+
     fun loadRecyclerPosition(context: Context) = context.apply {
         getSharedPreferences("settings.txt", Context.MODE_PRIVATE).apply {
             currentRecyclerPosition = getInt("recyclerPosition", 0)
+        }
+    }
+
+    fun loadTabPosition(context: Context):Int {
+        context.apply {
+            getSharedPreferences("settings.txt", Context.MODE_PRIVATE).apply {
+                return getInt("tabPosition", 0)
+            }
         }
     }
 
