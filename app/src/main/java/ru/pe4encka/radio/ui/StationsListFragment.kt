@@ -40,6 +40,7 @@ class StationsListFragment : Fragment() {
                     onStationClick(getItem(i).station)
                     PlayerModel.stop()
                     PlayerModel.currentRecyclerItem = getItem(i)
+                    //PlayerModel.updateTitle()
                 }
                 onLikeClick = {s,p -> model.onLikeClick(s,p)}
                 model.catalogAdapter = this

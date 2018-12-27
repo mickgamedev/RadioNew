@@ -40,6 +40,7 @@ class RecentListFragment : Fragment() {
                     onStationClick(getItem(i).station)
                     PlayerModel.stop()
                     PlayerModel.currentRecyclerItem = getItem(i)
+                    //PlayerModel.updateTitle()
                 }
                 ItemTouchHelper(BaseSwipeDragHelper(model::onSwipeRecentItem)).apply {
                     attachToRecyclerView(binding.recycler)

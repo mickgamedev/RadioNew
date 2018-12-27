@@ -5,9 +5,16 @@ import android.app.Service
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.media.TimedMetaData
+import android.media.TimedText
+import android.net.Uri
 import android.os.IBinder
+import android.text.Html
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.vodyasov.amr.AudiostreamMetadataManager
+import com.vodyasov.amr.OnNewMetadataListener
+import com.vodyasov.amr.UserAgent
 import ru.pe4encka.radio.R
 import ru.pe4encka.radio.models.PlayerModel
 import ru.pe4encka.radio.ui.MainActivity
@@ -25,7 +32,6 @@ class RadioService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var path: String
     private var readyToPlay = false
-
 
     override fun onCreate() {
         super.onCreate()
@@ -68,6 +74,7 @@ class RadioService : Service() {
         mediaPlayer = MediaPlayer()
         setMediaPlayerListeners()
         mediaPlayer?.setDataSource(path)
+        //mmr.setDataSource(path)
         mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
         mediaPlayer?.prepareAsync()
         PlayerModel.prepare()
@@ -75,6 +82,16 @@ class RadioService : Service() {
 
     private fun setMediaPlayerListeners() {
         mediaPlayer?.setOnPreparedListener { preparedListener() }
+        mediaPlayer?.setOnTimedMetaDataAvailableListener { _, data ->  metaDataListener(data)}
+        mediaPlayer?.setOnTimedTextListener { _, text ->  timedTextListener(text)}
+    }
+
+    private fun timedTextListener(text: TimedText){
+
+    }
+
+    private fun metaDataListener(meta: TimedMetaData){
+        val data = meta.metaData
     }
 
     private fun preparedListener() {
@@ -89,14 +106,38 @@ class RadioService : Service() {
 
     private fun stop() {
         mediaPlayer?.stop()
+        AudiostreamMetadataManager.getInstance().stop()
     }
 
     private fun pause() {
         mediaPlayer?.pause()
+        AudiostreamMetadataManager.getInstance().stop()
     }
 
     private fun play() {
         if (readyToPlay) mediaPlayer?.start()
+        AudiostreamMetadataManager.getInstance()
+            .setUri(Uri.parse(path))
+            .setOnNewMetadataListener(object: OnNewMetadataListener{
+                override fun onNewHeaders(
+                    stringUri: String?,
+                    name: MutableList<String>?,
+                    desc: MutableList<String>?,
+                    br: MutableList<String>?,
+                    genre: MutableList<String>?,
+                    info: MutableList<String>?
+                ) {
+
+                }
+
+                override fun onNewStreamTitle(stringUri: String?, streamTitle: String?) {
+                    val title = Html.fromHtml(streamTitle?: "")
+                    PlayerModel.setTitle(title)
+                }
+
+            })
+            .setUserAgent(UserAgent.WINDOWS_MEDIA_PLAYER)
+            .start()
     }
 
     /* Used to build and start foreground service. */
@@ -146,6 +187,7 @@ class RadioService : Service() {
         PlayerModel.currentPlay?.let {
             setContentTitle(it.name)
         }
+        //setContentText(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE))
         //setContentTitle("Radio")
         //setContentText(music.album)
         //setContentInfo(music.albumartist)
