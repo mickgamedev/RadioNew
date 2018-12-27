@@ -9,8 +9,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import ru.pe4encka.radio.adapters.StationsListAdapter
 import ru.pe4encka.radio.models.StationModel
 import ru.pe4encka.radio.repository.Repository
+import ru.pe4encka.radio.repository.findRecyclerModelByID
+import ru.pe4encka.radio.repository.findStationModelByID
 
 class MainViewModel : ViewModel() {
     private val viewModelJob = Job()
@@ -26,6 +29,8 @@ class MainViewModel : ViewModel() {
     val showUpScroll = ObservableBoolean(false)
     private val disp: Disposable
     private var tempShowUpScroll: Boolean = false
+
+    var catalogAdapter: StationsListAdapter? = null
 
     init {
         if (stations.get() == null) {
@@ -50,7 +55,8 @@ class MainViewModel : ViewModel() {
     fun onAddRecentStation(station: StationModel) {
         ioScope.launch {
             station.recent = true
-            Repository.addRecentStation(station)
+            catalogAdapter?.getItems()?.findRecyclerModelByID(station.id)?.showLike?.set(station.recent)
+            Repository.updateRecentStation(station)
         }
     }
 
@@ -82,13 +88,25 @@ class MainViewModel : ViewModel() {
     fun onSwipeRecentItem(i: Int) {
         val list = recentStations.get()
         list ?: return
-        val station = list[i]
+        onRemoveRecentStation(list[i])
+    }
+
+    fun onRemoveRecentStation(station: StationModel){
         ioScope.launch {
             station.recent = false
-            Repository.addRecentStation(station)
+            catalogAdapter?.getItems()?.findRecyclerModelByID(station.id)?.showLike?.set(station.recent)
+            stations.get()?.findStationModelByID(station.id)?.recent = station.recent
+            Repository.updateRecentStation(station)
         }
     }
 
+    fun onLikeClick(station: StationModel, state: Boolean){
+        if(state){
+            onAddRecentStation(station)
+        } else {
+            onRemoveRecentStation(station)
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()

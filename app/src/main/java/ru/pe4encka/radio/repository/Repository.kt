@@ -3,9 +3,11 @@ package ru.pe4encka.radio.repository
 import android.content.Context
 import android.util.Log
 import kotlinx.serialization.json.JSON
+import kotlinx.serialization.list
 import org.apache.commons.io.IOUtils
 import ru.pe4encka.radio.R
 import ru.pe4encka.radio.database.*
+import ru.pe4encka.radio.models.RecyclerModel
 import ru.pe4encka.radio.models.StationModel
 import java.nio.charset.Charset
 
@@ -32,8 +34,8 @@ object Repository{
         } else stations = list
     }
 
-    suspend fun addRecentStation(station: StationModel) {
-        Catalog.addRecentStation(station)
+    suspend fun updateRecentStation(station: StationModel) {
+        Catalog.updateRecentStation(station)
     }
 
     fun getRecentObserver() = Catalog.getRecentStations()
@@ -54,4 +56,18 @@ object Repository{
         stations ?: return false
         return stations!!.size == list.size
     }
+}
+
+fun List<RecyclerModel>.findRecyclerModelByID(id: Int): RecyclerModel? {
+    forEach {
+        if(id == it.station.id) return it
+    }
+    return null
+}
+
+fun List<StationModel>.findStationModelByID(id: Int): StationModel? {
+    forEach {
+        if(it.id == id) return it
+    }
+    return null
 }

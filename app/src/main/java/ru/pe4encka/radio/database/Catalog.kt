@@ -25,7 +25,7 @@ abstract class Catalog : RoomDatabase() {
 
 fun Catalog.Companion.getStations() = getInstance().stationModelDao().getAllStations()
 fun Catalog.Companion.addStations(stations: List<StationModel>) = getInstance().stationModelDao().addStations(stations)
-fun Catalog.Companion.addRecentStation(station: StationModel) =
+fun Catalog.Companion.updateRecentStation(station: StationModel) =
     getInstance().stationModelDao().addStation(station)
 
 fun Catalog.Companion.getRecentStations() = getInstance().stationModelDao().getRecentStations()

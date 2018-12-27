@@ -18,6 +18,8 @@ abstract class CategoryAdapter<T : Any, V : ViewDataBinding>(val layout: Int) :
         Log.w("ADAPTER", "setItems list size = ${list.size}")
     }
 
+    fun getItems() = items
+
     fun removeItem(i: Int) {
         items.removeAt(i)
     }

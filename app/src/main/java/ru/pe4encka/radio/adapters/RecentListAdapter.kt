@@ -3,13 +3,14 @@ package ru.pe4encka.radio.adapters
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import ru.pe4encka.radio.R
+import ru.pe4encka.radio.databinding.CardRecentListBinding
 import ru.pe4encka.radio.databinding.CardStationListBinding
 import ru.pe4encka.radio.models.RecyclerModel
 
-class RecentListAdapter : CategoryAdapter<RecyclerModel, CardStationListBinding>(
-    R.layout.card_station_list
+class RecentListAdapter : CategoryAdapter<RecyclerModel, CardRecentListBinding>(
+    R.layout.card_recent_list
 ) {
-    override fun onBindViewHolder(holder: CategoryHolder<CardStationListBinding>, position: Int) =
+    override fun onBindViewHolder(holder: CategoryHolder<CardRecentListBinding>, position: Int) =
         with(holder.binding) {
             holder.itemView.setOnClickListener { onItemClick(position) }
             model = getItem(position)

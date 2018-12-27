@@ -41,6 +41,8 @@ class StationsListFragment : Fragment() {
                     PlayerModel.stop()
                     PlayerModel.currentRecyclerItem = getItem(i)
                 }
+                onLikeClick = {s,p -> model.onLikeClick(s,p)}
+                model.catalogAdapter = this
             }
             recycler.layoutManager = LinearLayoutManager(activity).apply {
                 scrollToPositionWithOffset(Repository.currentRecyclerPosition, 0)
@@ -69,7 +71,7 @@ class StationsListFragment : Fragment() {
         } else ACTION_START_FOREGROUND_SERVICE
 
         PlayerModel.currentPlay = station
-        if (act == ACTION_START_FOREGROUND_SERVICE) model.onAddRecentStation(station)
+        //if (act == ACTION_START_FOREGROUND_SERVICE) model.onAddRecentStation(station)
 
         Intent(activity, RadioService::class.java).apply {
             action = act
@@ -85,5 +87,6 @@ class StationsListFragment : Fragment() {
                 (binding.recycler.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
         Repository.saveRecyclerPosition(activity!!)
         model.scrollToUp = {}
+        model.catalogAdapter = null
     }
 }
