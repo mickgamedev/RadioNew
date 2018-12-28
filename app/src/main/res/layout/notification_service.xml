@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" android:id="@+id/root" android:background="@color/colorPrimary">
+    <ImageView android:layout_width="100dp" android:layout_height="100dp"
+               android:id="@+id/imageLogo"
+               android:src="@drawable/ic_radio_icon_orange" android:scaleType="fitCenter"
+               tools:ignore="ContentDescription"/>
+    <TextView
+            android:singleLine="true"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/stationName" android:layout_marginTop="4dp"
+            android:layout_marginStart="4dp" android:layout_marginEnd="0dp"
+            android:fontFamily="@font/roboto_light" android:textSize="18sp" android:layout_toEndOf="@+id/imageLogo"
+            android:layout_alignParentEnd="true" android:layout_alignParentTop="true"
+            android:textAppearance="@style/TextAppearance.Compat.Notification.Title"/>
+    <TextView
+            android:singleLine="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp" android:id="@+id/textTitle"
+            android:layout_toEndOf="@+id/imageLogo" android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
+            android:layout_marginTop="4dp" android:layout_below="@+id/stationName"
+            android:textAppearance="@style/TextAppearance.Compat.Notification.Info"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="168dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="0dp" android:layout_alignParentBottom="true"
+            android:layout_marginBottom="0dp" android:layout_toEndOf="@+id/imageLogo" android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp" android:layout_marginTop="8dp" android:layout_below="@+id/textTitle">
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:src="@drawable/ic_play_gray" android:id="@+id/imagePlay"
+                android:layout_weight="1" tools:ignore="ContentDescription"/>
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:src="@drawable/ic_pause_gray" android:id="@+id/imagePause"
+                android:layout_weight="1" tools:ignore="ContentDescription"/>
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:src="@drawable/ic_stop_gray" android:id="@+id/imageStop"
+                android:layout_weight="1" tools:ignore="ContentDescription"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -6,6 +6,8 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
@@ -13,7 +15,10 @@ import android.os.IBinder
 import android.text.Html
 import android.text.Spanned
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import com.vodyasov.amr.AudiostreamMetadataManager
 import com.vodyasov.amr.OnNewMetadataListener
 import com.vodyasov.amr.UserAgent
@@ -36,6 +41,7 @@ class RadioService : Service() {
     private var readyToPlay = false
 
     private var notificationTitle: Spanned? = null
+    private var notificationBitmap: Bitmap? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -78,6 +84,25 @@ class RadioService : Service() {
         }
         PlayerModel.prepare()
         notificationTitle = null
+        notificationBitmap = null
+        if(PlayerModel.currentPlay != null) {
+            val src = PlayerModel.currentPlay!!.logo
+            if (!src.isEmpty()) Picasso.get().load(src).into(object: Target{
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                }
+
+                override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                }
+
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    if(bitmap != null) {
+                        notificationBitmap = bitmap
+                        updateNotification()
+                    }
+                }
+
+            })
+        }
     }
 
     private fun preparedListener() {
@@ -131,34 +156,6 @@ class RadioService : Service() {
     private fun createNotification(): Notification {
         val builder = NotificationCompat.Builder(this)
         createNotificationBuilder(builder)
-
-        // Add Play button intent in notification.
-        val playIntent = Intent(this, RadioService::class.java)
-        playIntent.action = ACTION_PLAY
-        val pendingPlayIntent = PendingIntent.getService(this, 0, playIntent, 0)
-        val playAction = NotificationCompat.Action(R.drawable.ic_play, "Play", pendingPlayIntent)
-        builder.addAction(playAction)
-
-        // Add Pause button intent in notification.
-        val pauseIntent = Intent(this, RadioService::class.java)
-        pauseIntent.action = ACTION_PAUSE
-        val pendingPrevIntent = PendingIntent.getService(this, 0, pauseIntent, 0)
-        val prevAction = NotificationCompat.Action(R.drawable.ic_pause, "Pause", pendingPrevIntent)
-        builder.addAction(prevAction)
-
-        // Add Stop button intent in notification.
-        val stopIntent = Intent(this, RadioService::class.java)
-        stopIntent.action = ACTION_STOP_FOREGROUND_SERVICE
-        val pendingStopIntent = PendingIntent.getService(this, 0, stopIntent, 0)
-        val stopAction = NotificationCompat.Action(R.drawable.ic_stop, "Stop", pendingStopIntent)
-        builder.addAction(stopAction)
-
-        val activityIntent = Intent(this, MainActivity::class.java)
-        val pendingIntentActivity =
-            PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        builder.setContentIntent(pendingIntentActivity)
-
-        // Build the notification.
         return builder.build()
     }
 
@@ -174,18 +171,51 @@ class RadioService : Service() {
         startForeground(1, notification)
     }
 
-    private fun createNotificationBuilder(builder: NotificationCompat.Builder) = builder.apply {
-        setSmallIcon(R.drawable.ic_radio_icon)
-        setPriority(NotificationCompat.PRIORITY_MAX)
-        PlayerModel.currentPlay?.let {
-            setContentTitle(it.name)
+    private fun createNotificationBuilder(builder: NotificationCompat.Builder) {
+        val playIntent = Intent(this, RadioService::class.java)
+        playIntent.action = ACTION_PLAY
+        val pendingIntentPlay = PendingIntent.getService(this, 0, playIntent, 0)
+
+        val pauseIntent = Intent(this, RadioService::class.java)
+        pauseIntent.action = ACTION_PAUSE
+        val pendingIntentPause = PendingIntent.getService(this, 0, pauseIntent, 0)
+
+        val stopIntent = Intent(this, RadioService::class.java)
+        stopIntent.action = ACTION_STOP_FOREGROUND_SERVICE
+        val pendingIntentStop = PendingIntent.getService(this, 0, stopIntent, 0)
+
+        val activityIntent = Intent(this, MainActivity::class.java)
+        val pendingIntentActivity =
+            PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val remoteViews = RemoteViews(packageName, R.layout.notification_service).apply{
+            PlayerModel.currentPlay?.let {
+                setTextViewText(R.id.stationName, it.name)
+
+            }
+            notificationTitle?.let {
+                if(it.length > 0) setTextViewText(R.id.textTitle,it.toString())
+                else setTextViewText(R.id.textTitle,"")
+            }
+            notificationBitmap?.let{
+                setImageViewBitmap(R.id.imageLogo,it)
+            }
+
+
+            setOnClickPendingIntent(R.id.root, pendingIntentActivity)
+            setOnClickPendingIntent(R.id.imagePlay, pendingIntentPlay)
+            setOnClickPendingIntent(R.id.imagePause, pendingIntentPause)
+            setOnClickPendingIntent(R.id.imageStop, pendingIntentStop)
+
         }
-        notificationTitle?.let {
-            if(it.length > 0) setContentText(it)
+
+        builder.apply {
+            setOnlyAlertOnce(true)
+            setOngoing(true)
+            setShowWhen(false)
+            setSmallIcon(R.drawable.ic_radio_icon)
+            setCustomBigContentView(remoteViews)
         }
-        setOnlyAlertOnce(true)
-        setOngoing(true)
-        setShowWhen(false)
     }
 
     private fun stopForegroundService() {
