@@ -1,7 +1,10 @@
 package ru.pe4encka.radio.service
 
+import android.app.Notification
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -10,6 +13,7 @@ import android.media.TimedText
 import android.net.Uri
 import android.os.IBinder
 import android.text.Html
+import android.text.Spanned
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.vodyasov.amr.AudiostreamMetadataManager
@@ -18,6 +22,7 @@ import com.vodyasov.amr.UserAgent
 import ru.pe4encka.radio.R
 import ru.pe4encka.radio.models.PlayerModel
 import ru.pe4encka.radio.ui.MainActivity
+
 
 val TAG_FOREGROUND_SERVICE = "FOREGROUND_SERVICE"
 val ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE"
@@ -32,6 +37,8 @@ class RadioService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var path: String
     private var readyToPlay = false
+
+    private var tit: Spanned? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -78,6 +85,7 @@ class RadioService : Service() {
         mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
         mediaPlayer?.prepareAsync()
         PlayerModel.prepare()
+        tit = null
     }
 
     private fun setMediaPlayerListeners() {
@@ -133,6 +141,8 @@ class RadioService : Service() {
                 override fun onNewStreamTitle(stringUri: String?, streamTitle: String?) {
                     val title = Html.fromHtml(streamTitle?: "")
                     PlayerModel.setTitle(title)
+                    tit = title
+                    updateNotification()
                 }
 
             })
@@ -140,12 +150,11 @@ class RadioService : Service() {
             .start()
     }
 
-    /* Used to build and start foreground service. */
-    private fun startForegroundService() {
+    private fun createNotification(): Notification {
         // Create notification builder.
         val builder = NotificationCompat.Builder(this)
 
-        createNotification(builder)
+        createNotificationBuilder(builder)
 
         // Add Play button intent in notification.
         val playIntent = Intent(this, RadioService::class.java)
@@ -174,19 +183,34 @@ class RadioService : Service() {
         builder.setContentIntent(pendingIntentActivity)
 
         // Build the notification.
-        val notification = builder.build()
+        return builder.build()
+    }
 
+    private fun updateNotification(){
+        val notification = createNotification()
+        val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        mNotificationManager.notify(1,notification);
+    }
+
+    /* Used to build and start foreground service. */
+    private fun startForegroundService() {
+        val notification = createNotification()
         // Start foreground service.
         startForeground(1, notification)
     }
 
-    private fun createNotification(builder: NotificationCompat.Builder) = builder.apply{
+    private fun createNotificationBuilder(builder: NotificationCompat.Builder) = builder.apply{
         setSmallIcon(R.drawable.ic_radio_icon)
         //color = getColor(R.color.colorIconNotification)
         setPriority(NotificationCompat.PRIORITY_MAX)
         PlayerModel.currentPlay?.let {
             setContentTitle(it.name)
         }
+        tit?.let{
+            setContentText(it)
+        }
+        setOnlyAlertOnce(true)
+        setOngoing(true)
         //setContentText(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE))
         //setContentTitle("Radio")
         //setContentText(music.album)

@@ -7,7 +7,7 @@ object PlayerModel {
     var currentPlay: StationModel? = null
     var currentRecyclerItem: RecyclerModel? = null
     var isPlaying: Boolean = false
-    private var tit: Spanned? = null
+    var tit: Spanned? = null
 
     fun updateTitle(){
         if(tit != null) currentRecyclerItem?.title?.set(tit)
