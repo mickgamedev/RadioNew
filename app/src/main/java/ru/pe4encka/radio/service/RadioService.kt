@@ -8,8 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.media.TimedMetaData
-import android.media.TimedText
 import android.net.Uri
 import android.os.IBinder
 import android.text.Html
@@ -33,12 +31,11 @@ val EXTRA_FILENAME_ID = "FILENAME_ID"
 
 
 class RadioService : Service() {
-    //private lateinit var music: MusicSong
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var path: String
     private var readyToPlay = false
 
-    private var tit: Spanned? = null
+    private var notificationTitle: Spanned? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -47,27 +44,21 @@ class RadioService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
-            when(it.action){
+            when (it.action) {
                 ACTION_START_FOREGROUND_SERVICE -> {
-                    //music = MusicSong(it.getStringExtra(EXTRA_FILENAME_ID)).apply { extractMetaData() }
                     path = it.getStringExtra(EXTRA_FILENAME_ID)
                     startForegroundService()
-                    //Toast.makeText(applicationContext, "Foreground service is started.", Toast.LENGTH_SHORT).show()
                     prepare()
-                    //play()
                 }
                 ACTION_STOP_FOREGROUND_SERVICE -> {
                     stopForegroundService()
-                    //Toast.makeText(applicationContext, "Foreground service is stopped.", Toast.LENGTH_SHORT).show()
                     stop()
                     clear()
                 }
                 ACTION_PLAY -> {
-                    //Toast.makeText(applicationContext, "You click Play button.", Toast.LENGTH_SHORT).show()
                     play()
                 }
                 ACTION_PAUSE -> {
-                    //Toast.makeText(applicationContext, "You click Pause button.", Toast.LENGTH_SHORT).show()
                     pause()
                 }
             }
@@ -75,31 +66,18 @@ class RadioService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun prepare(){
+    private fun prepare() {
         readyToPlay = false
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer()
-        setMediaPlayerListeners()
-        mediaPlayer?.setDataSource(path)
-        //mmr.setDataSource(path)
-        mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
-        mediaPlayer?.prepareAsync()
+        mediaPlayer?.apply {
+            setOnPreparedListener { preparedListener() }
+            setDataSource(path)
+            setAudioStreamType(AudioManager.STREAM_MUSIC)
+            prepareAsync()
+        }
         PlayerModel.prepare()
-        tit = null
-    }
-
-    private fun setMediaPlayerListeners() {
-        mediaPlayer?.setOnPreparedListener { preparedListener() }
-        mediaPlayer?.setOnTimedMetaDataAvailableListener { _, data ->  metaDataListener(data)}
-        mediaPlayer?.setOnTimedTextListener { _, text ->  timedTextListener(text)}
-    }
-
-    private fun timedTextListener(text: TimedText){
-
-    }
-
-    private fun metaDataListener(meta: TimedMetaData){
-        val data = meta.metaData
+        notificationTitle = null
     }
 
     private fun preparedListener() {
@@ -108,7 +86,7 @@ class RadioService : Service() {
         PlayerModel.play()
     }
 
-    private fun clear(){
+    private fun clear() {
         mediaPlayer?.release()
     }
 
@@ -126,7 +104,7 @@ class RadioService : Service() {
         if (readyToPlay) mediaPlayer?.start()
         AudiostreamMetadataManager.getInstance()
             .setUri(Uri.parse(path))
-            .setOnNewMetadataListener(object: OnNewMetadataListener{
+            .setOnNewMetadataListener(object : OnNewMetadataListener {
                 override fun onNewHeaders(
                     stringUri: String?,
                     name: MutableList<String>?,
@@ -139,9 +117,9 @@ class RadioService : Service() {
                 }
 
                 override fun onNewStreamTitle(stringUri: String?, streamTitle: String?) {
-                    val title = Html.fromHtml(streamTitle?: "")
+                    val title = Html.fromHtml(streamTitle ?: "")
                     PlayerModel.setTitle(title)
-                    tit = title
+                    notificationTitle = title
                     updateNotification()
                 }
 
@@ -151,9 +129,7 @@ class RadioService : Service() {
     }
 
     private fun createNotification(): Notification {
-        // Create notification builder.
         val builder = NotificationCompat.Builder(this)
-
         createNotificationBuilder(builder)
 
         // Add Play button intent in notification.
@@ -177,45 +153,38 @@ class RadioService : Service() {
         val stopAction = NotificationCompat.Action(R.drawable.ic_stop, "Stop", pendingStopIntent)
         builder.addAction(stopAction)
 
-
         val activityIntent = Intent(this, MainActivity::class.java)
-        val pendingIntentActivity = PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntentActivity =
+            PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(pendingIntentActivity)
 
         // Build the notification.
         return builder.build()
     }
 
-    private fun updateNotification(){
+    private fun updateNotification() {
         val notification = createNotification()
         val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(1,notification);
+        mNotificationManager.notify(1, notification);
     }
 
-    /* Used to build and start foreground service. */
     private fun startForegroundService() {
         val notification = createNotification()
         // Start foreground service.
         startForeground(1, notification)
     }
 
-    private fun createNotificationBuilder(builder: NotificationCompat.Builder) = builder.apply{
+    private fun createNotificationBuilder(builder: NotificationCompat.Builder) = builder.apply {
         setSmallIcon(R.drawable.ic_radio_icon)
-        //color = getColor(R.color.colorIconNotification)
         setPriority(NotificationCompat.PRIORITY_MAX)
         PlayerModel.currentPlay?.let {
             setContentTitle(it.name)
         }
-        tit?.let{
-            setContentText(it)
+        notificationTitle?.let {
+            if(it.length > 0) setContentText(it)
         }
         setOnlyAlertOnce(true)
         setOngoing(true)
-        //setContentText(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE))
-        //setContentTitle("Radio")
-        //setContentText(music.album)
-        //setContentInfo(music.albumartist)
-        //setLargeIcon(music.cover)
         setShowWhen(false)
     }
 

@@ -63,19 +63,13 @@ fun RecyclerView.setRecentList(lib: List<StationModel>?) {
 
 @BindingAdapter("src")
 fun ImageView.setBitmap(bitmap: Bitmap?) {
-    bitmap ?: let {
-        //visibility = View.GONE
-        return
-    }
+    bitmap ?: return
     setImageBitmap(bitmap)
 }
 
 @BindingAdapter("src")
 fun ImageView.setSourceImage(src: String?) {
-    src ?: let {
-        //visibility = View.GONE
-        return
-    }
+    src ?: return
     if (!src.isEmpty()) Picasso.get().load(src).into(this)
 }
 

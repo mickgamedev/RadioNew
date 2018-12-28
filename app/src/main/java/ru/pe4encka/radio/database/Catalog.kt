@@ -15,10 +15,10 @@ abstract class Catalog : RoomDatabase() {
     abstract fun stationModelDao(): StationModelDao
 
     companion object {
-        private var INSTANCE: Catalog? = null
-        fun getInstance() = INSTANCE!!
+        private var inst: Catalog? = null
+        fun getInstance() = inst!!
         fun init(context: Context) {
-            INSTANCE = Room.databaseBuilder(context, Catalog::class.java, "catalog.db").build()
+            inst = Room.databaseBuilder(context, Catalog::class.java, "catalog.db").build()
         }
     }
 }

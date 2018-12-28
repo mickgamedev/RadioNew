@@ -91,7 +91,7 @@ class MainViewModel : ViewModel() {
         onRemoveRecentStation(list[i])
     }
 
-    fun onRemoveRecentStation(station: StationModel){
+    fun onRemoveRecentStation(station: StationModel) {
         ioScope.launch {
             station.recent = false
             catalogAdapter?.getItems()?.findRecyclerModelByID(station.id)?.showLike?.set(station.recent)
@@ -100,8 +100,8 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun onLikeClick(station: StationModel, state: Boolean){
-        if(state){
+    fun onLikeClick(station: StationModel, state: Boolean) {
+        if (state) {
             onAddRecentStation(station)
         } else {
             onRemoveRecentStation(station)

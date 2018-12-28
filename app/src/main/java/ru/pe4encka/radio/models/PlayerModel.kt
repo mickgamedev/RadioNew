@@ -7,46 +7,44 @@ object PlayerModel {
     var currentPlay: StationModel? = null
     var currentRecyclerItem: RecyclerModel? = null
     var isPlaying: Boolean = false
-    var tit: Spanned? = null
+    var streamTitle: Spanned? = null
 
     fun updateTitle(){
-        if(tit != null) currentRecyclerItem?.title?.set(tit)
+        if(streamTitle != null) currentRecyclerItem?.title?.set(streamTitle)
     }
 
     fun setTitle(title: Spanned){
-        tit = title
+        streamTitle = title
         updateTitle()
     }
 
     fun play() {
-        currentRecyclerItem?.let {
-            it.showDescription.set(true)
-            it.showStopButton.set(true)
-            it.showProcessPrepare.set(false)
-            //it.title.set(SpannableString(""))
+        currentRecyclerItem?.apply {
+            showDescription.set(true)
+            showStopButton.set(true)
+            showProcessPrepare.set(false)
             isPlaying = true
         }
     }
 
     fun stop() {
         isPlaying = false
-        currentRecyclerItem?.let {
-            it.showDescription.set(false)
-            it.showStopButton.set(false)
-            it.showProcessPrepare.set(false)
+        currentRecyclerItem?.apply {
+            showDescription.set(false)
+            showStopButton.set(false)
+            showProcessPrepare.set(false)
         }
     }
 
     fun prepare() {
-        currentRecyclerItem?.let {
-            it.showProcessPrepare.set(true)
-            it.title.set(SpannableString(""))
+        currentRecyclerItem?.apply {
+            showProcessPrepare.set(true)
+            title.set(SpannableString(""))
         }
     }
 
     fun findRecyclerItem(items: List<RecyclerModel>) {
         currentPlay ?: return
-        //if (!isPlaying) return
 
         for (it in items) {
             if (it.station == currentPlay) {
@@ -56,6 +54,5 @@ object PlayerModel {
                 break
             }
         }
-
     }
 }
