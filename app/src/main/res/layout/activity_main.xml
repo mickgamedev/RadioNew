@@ -47,7 +47,7 @@
                             app:layout_constraintVertical_bias="0.0"
                             android:maxWidth="200dp"/>
                     <TextView
-                            android:text="@string/app_name"
+                            android:text="@string/title_name"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:id="@+id/textView2" app:layout_constraintStart_toStartOf="parent"

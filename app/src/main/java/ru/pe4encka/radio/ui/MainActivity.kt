@@ -1,6 +1,7 @@
 package ru.pe4encka.radio.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
@@ -19,8 +20,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.v("Application","MainActivity onCreate")
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        Log.v("Application","MainActivity onCreate setContentView OK")
         model = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        Log.v("Application","MainActivity onCreate ViewModelProviders OK")
         binding.apply {
             viewModel = model
             bottomMenu.apply {
@@ -35,6 +39,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         setSearchListeners()
+        Log.v("Application","MainActivity onCreate OK")
     }
 
     private fun menuItemSelected(item: MenuItem): Boolean {

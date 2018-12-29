@@ -27,23 +27,30 @@ class MainViewModel : ViewModel() {
 
     val showSearch = ObservableBoolean(true)
     val showUpScroll = ObservableBoolean(false)
-    private val disp: Disposable
+    private var disp: Disposable? = null
     private var tempShowUpScroll: Boolean = false
 
     var catalogAdapter: StationsListAdapter? = null
 
     init {
+        Log.v("Application","MainViewModel init")
         if (stations.get() == null) {
             parseStation.set(true)
+            Log.v("Application","MainViewModel start coroutine")
             ioScope.launch {
                 Repository.parseStationList()
                 stations.set(Repository.stations)
                 parseStation.set(false)
+
+
             }
+            Log.v("Application","MainViewModel end coroutine")
         }
         disp = Repository.getRecentObserver().subscribe {
             recentStations.set(it)
         }
+
+        Log.v("Application","MainViewModel init OK")
     }
 
     fun toUP() = scrollToUp()
@@ -111,6 +118,6 @@ class MainViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
-        disp.dispose()
+        disp?.dispose()
     }
 }
